@@ -29,6 +29,13 @@ public class CurrencyConversion {
 		this.totalCalculatedAmount = totalCalculatedAmount;
 		this.environment = environment;
 	}
+	public CurrencyConversion(Long id, String from, String to) {
+		// TODO Auto-generated constructor stub
+		super();
+		this.id = id;
+		this.from = from;
+		this.to = to;
+	}
 	public Long getId() {
 		return id;
 	}

@@ -10,14 +10,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
 @RestController
 public class CurrencyConversionController {
 	
 	@Autowired
 	private CurrencyExchangeProxy proxy;
 	
+	public static final String name1 = "currencyService";
+	
 	
 	@GetMapping("/currency-conversion/from/{from}/to/{to}/quantity/{quantity}")
+	@CircuitBreaker(name = name1, fallbackMethod = "getCurrencyConversion")
 	public CurrencyConversion calculateCurrencyConversion(@PathVariable String from,
 														@PathVariable String to,
 														@PathVariable BigDecimal quantity) {
@@ -39,6 +44,16 @@ public class CurrencyConversionController {
 						quantity.multiply(currencyConversion.getConversionMultiple()),
 						currencyConversion.getEnvironment() + " "+ "Rest Template");
 	}
+	
+	
+	public CurrencyConversion getCurrencyConversion(Exception e) {
+		CurrencyConversion cc = new CurrencyConversion(101L,"USD","INR");
+		
+		return cc;
+	}
+	
+	
+	
 	
 	@GetMapping("/currency-conversion-feign/from/{from}/to/{to}/quantity/{quantity}")
 	public CurrencyConversion calculateCurrencyConversionFeign(@PathVariable String from,
